@@ -35,6 +35,9 @@ button {
 button.active {
   background-color: #9B88AA;
 }
+.mL24 {
+  margin-left: 24px;
+}
 .statusInfo {
   display: flex;
   color: white;

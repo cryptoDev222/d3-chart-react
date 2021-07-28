@@ -7,9 +7,10 @@ const Chart = ({ data }) => {
   const myRef = useRef(null);
   const imgRef = useRef(null);
   const [dateRange, setDateRange] = useState("1M");
+  const [dataKey, setDataKey] = useState("total_rev");
   const [status, setStatus] = useState({});
-  const ranges = { "1M": 30, "3M": 90, "6M": 180, "1Y": 365, ALL: -1 };
-  const divNum = { "1M": 3, "3M": 6, "6M": 9, "1Y": 20, ALL: 40 };
+  const ranges = { "1M": 30, "3M": 90, "6M": 180, "1Y": 360, ALL: -1 };
+  const divNum = { "1M": 3, "3M": 3, "6M": 9, "1Y": 9, ALL: 30 };
 
   const showStatus = (data) => {
     setStatus(data);
@@ -17,7 +18,7 @@ const Chart = ({ data }) => {
 
   useEffect(() => {
     drawChart();
-  }, [data, dateRange]);
+  }, [data, dateRange, dataKey]);
 
   const drawChart = () => {
     let width = "100%";
@@ -36,7 +37,7 @@ const Chart = ({ data }) => {
     setStatus(rangedData[0]);
 
     const displayData = rangedData.map(
-      (row) => Math.floor(row.total_rev * 100 + 0.5) / 100
+      (row) => Math.floor(row[dataKey] * 100 + 0.5) / 100
     );
 
     let preDate = rangedData.slice(
@@ -55,7 +56,7 @@ const Chart = ({ data }) => {
 
     let min = (Math.min.apply(null, displayData) * 4) / 5;
 
-    let scaleY = height / (max - min);
+    let scaleY = (height - 60) / (max - min);
 
     svg
       .selectAll("rect")
@@ -94,15 +95,15 @@ const Chart = ({ data }) => {
       .style("fill", "white");
     // Y-Axis
     var y = d3
-      .scaleBand()
-      .domain([Math.floor(min), Math.ceil(max)])
+      .scaleLinear()
+      .domain([Math.ceil(max), Math.floor(min)])
       .range([10, 450]);
     svg
       .append("g")
       .attr("transform", "translate(50,0)")
       .call(d3.axisLeft(y))
       .selectAll("text")
-      .attr("transform", "translate(-5,-5)rotate(-45)")
+      .attr("transform", "translate(-5,-5)rotate(-60)")
       .style("fill", "white")
       .selectAll("path")
       .style("fill", "white");
@@ -132,9 +133,25 @@ const Chart = ({ data }) => {
                 </button>
               );
             })}
-          </div>
-          <div>
-            <button onClick={() => exportImage()}>Export as JPEG</button>
+            <button
+              className={
+                dataKey === "total_rev"
+                  ? `${styles.active} ${styles.mL24}`
+                  : styles.mL24
+              }
+              onClick={() => setDataKey("total_rev")}
+            >
+              Receive
+            </button>
+            <button
+              className={dataKey === "total_vol" ? styles.active : ""}
+              onClick={() => setDataKey("total_vol")}
+            >
+              Volume
+            </button>
+            <button className={styles.mL24} onClick={() => exportImage()}>
+              Export as JPEG
+            </button>
           </div>
           <div className={styles.statusInfo}>
             <p>Date: {status?.date}</p>
