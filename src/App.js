@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
+import { CSVLink } from "react-csv";
 import * as XLSX from "xlsx";
 import file from "./assets/aggregated_stock_exchange.csv";
 import Chart from "./components/chart";
@@ -64,12 +65,34 @@ function App() {
     }
 
     // prepare columns list from headers
-    const columns = headers.map((c) => ({
-      name: c,
-      selector: c,
-    }));
+    const columns = [
+      {
+        name: "Date",
+        selector: "date",
+        sortable: true,
+      },
+      {
+        name: "Total Receive",
+        selector: "total_rev",
+        sortable: true,
+      },
+      {
+        name: "Total Volume",
+        selector: "total_vol",
+        sortable: true,
+      },
+    ];
 
-    setData(list);
+    let stockData = list.map((set) => {
+      let dates = set.date.split("/");
+      if (dates[0].length === 1) dates[0] = "0" + dates[0];
+      if (dates[1].length === 1) dates[1] = "0" + dates[1];
+      let dateStr = `20${dates[2]}-${dates[0]}-${dates[1]}`;
+      set.date = dateStr;
+      return set;
+    });
+
+    setData(stockData);
     setColumns(columns);
   };
 
@@ -77,7 +100,18 @@ function App() {
     <>
       <h2 className="taCenter">Chart Demo</h2>
       <Chart data={data} />
-      <DataTable pagination highlightOnHover columns={columns} data={data} />
+      <div className="tableContainer">
+        <CSVLink className="export-csv" filename="test.csv" data={data}>
+          Export CSV
+        </CSVLink>
+        <DataTable
+          sortable
+          pagination
+          highlightOnHover
+          columns={columns}
+          data={data}
+        />
+      </div>
     </>
   );
 }

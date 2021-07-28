@@ -39,7 +39,12 @@ const Chart = ({ data }) => {
       (row) => Math.floor(row.total_rev * 100 + 0.5) / 100
     );
 
-    let dateData = rangedData.filter(
+    let preDate = rangedData.slice(
+      divNum[dateRange] / 2,
+      -divNum[dateRange] / 2
+    );
+    console.log(preDate);
+    let dateData = preDate.filter(
       (row, index) => index % divNum[dateRange] === 0
     );
     dateData = dateData.map((data) => data.date);
@@ -83,7 +88,7 @@ const Chart = ({ data }) => {
       .attr("transform", "translate(40,450)")
       .call(d3.axisBottom(x))
       .selectAll("text")
-      .attr("transform", "translate(-10,10)rotate(-45)")
+      .attr("transform", "translate(-10,15)rotate(-45)")
       .style("fill", "white")
       .selectAll("path")
       .style("fill", "white");

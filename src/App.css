@@ -31,6 +31,27 @@
   text-align: center;
 }
 
+.export-csv {
+  display: block;
+  text-decoration: none;
+  background-color: #696D75;
+  color: white;
+  border: 1px solid gray;
+  outline: none;
+  border-radius: 2px;
+  padding: 3px 6px;
+  margin: 2px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.tableContainer {
+  padding: 12px;
+  display: flex;
+  flex-flow: column;
+  align-items: flex-end;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
